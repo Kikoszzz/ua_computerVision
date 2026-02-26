@@ -4,28 +4,23 @@
  #
  # Paulo Dias
 
-
-
-#import
 import numpy as np
 import cv2
 import sys
 
 # Read the image
-image = cv2.imread( sys.argv[1], cv2.IMREAD_UNCHANGED )
+image = cv2.imread(sys.argv[1], cv2.IMREAD_UNCHANGED )
 
-
-if  np.shape(image) == ():
+if image is None:
 	# Failed Reading
 	print("Image file could not be open")
 	exit(-1)
 
 # Image characteristics
-height, width = image.shape
+height, width = image.shape[:2]
 
 print("Image Size: (%d,%d)" % (height, width))
 print("Image Type: %s" % (image.dtype))
-
 
 # Create a vsiualization window (optional)
 # CV_WINDOW_AUTOSIZE : window size will depend on image size
