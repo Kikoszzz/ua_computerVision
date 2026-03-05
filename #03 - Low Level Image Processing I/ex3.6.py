@@ -1,7 +1,7 @@
 import cv2
 import matplotlib.pyplot as plt
 
-image = cv2.imread('../images/deti.bmp', cv2.IMREAD_UNCHANGED)
+image = cv2.imread('../images/blue.png', cv2.IMREAD_UNCHANGED)
 
 if image is None:
     print("ERRO CAMINHO IMAGEM")
