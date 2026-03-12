@@ -28,7 +28,9 @@ printImageFeatures(image)
 
 cv2.imshow('Orginal', image)
 
-'''
+
+# 4.2
+#'''
 imageAFilter3x3 = cv2.blur( image, (3, 3))
 imageAFilter5x5 = cv2.blur( image, (5, 5))
 imageAFilter7x7 = cv2.blur( image, (7, 7))
@@ -37,8 +39,21 @@ for i in range(3):
 	imageAFilter3x3 = cv2.blur( imageAFilter3x3, (3, 3))
 	imageAFilter5x5 = cv2.blur( imageAFilter5x5, (5, 5))
 	imageAFilter7x7 = cv2.blur( imageAFilter7x7, (7, 7))
+#'''
+
+# 4.3
+'''
+imageAFilter3x3 = cv2.medianBlur( image, 3)
+imageAFilter5x5 = cv2.medianBlur( image, 5)
+imageAFilter7x7 = cv2.medianBlur( image, 7)
+
+for i in range(3):
+	imageAFilter3x3 = cv2.medianBlur( imageAFilter3x3, 3)
+	imageAFilter5x5 = cv2.medianBlur( imageAFilter5x5, 5)
+	imageAFilter7x7 = cv2.medianBlur( imageAFilter7x7, 7)
 '''
 
+# 4.4
 '''
 imageAFilter3x3 = cv2.GaussianBlur( image, (3, 3), 0)
 imageAFilter5x5 = cv2.GaussianBlur( image, (5, 5), 0)
@@ -49,15 +64,6 @@ for i in range(3):
 	imageAFilter5x5 = cv2.GaussianBlur( imageAFilter5x5, (5, 5), 0)
 	imageAFilter7x7 = cv2.GaussianBlur( imageAFilter7x7, (7, 7), 0)
 '''
-
-imageAFilter3x3 = cv2.medianBlur( image, 3)
-imageAFilter5x5 = cv2.medianBlur( image, 5)
-imageAFilter7x7 = cv2.medianBlur( image, 7)
-
-for i in range(3):
-	imageAFilter3x3 = cv2.medianBlur( imageAFilter3x3, 3)
-	imageAFilter5x5 = cv2.medianBlur( imageAFilter5x5, 5)
-	imageAFilter7x7 = cv2.medianBlur( imageAFilter7x7, 7)
 
 cv2.namedWindow( "Average Filter 3 x 3", cv2.WINDOW_AUTOSIZE )
 cv2.imshow( "Average Filter 3 x 3", imageAFilter3x3 )
