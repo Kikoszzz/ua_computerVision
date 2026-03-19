@@ -13,6 +13,7 @@ kernel_vert = cv2.getStructuringElement(cv2.MORPH_RECT, (3,9))
 
 open = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel_vert)
 
+# 5.5
 close = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel_circle)
 
 cv2.imshow("Original", image)
