@@ -1,19 +1,17 @@
 # Aula_04_ex_05.py
 #
-# Sobel Operator
+# Canny edge detector with a simple CLI image menu
 #
-# Paulo Dias 
 
-#import
-import sys
-import numpy as np
+import os
 import cv2
+
 
 def printImageFeatures(image):
 	# Image characteristics
 	if len(image.shape) == 2:
 		height, width = image.shape
-		nchannels = 1;
+		nchannels = 1
 	else:
 		height, width, nchannels = image.shape
 
@@ -23,33 +21,52 @@ def printImageFeatures(image):
 	print("Image channels: %d" % nchannels)
 	print("Number of elements : %d" % image.size)
 
-# Read the image from argv
-#image = cv2.imread( sys.argv[1] , cv2.IMREAD_GRAYSCALE )
-image = cv2.imread("./lena.jpg", cv2.IMREAD_GRAYSCALE)
+
+def resolveImagePath(filename):
+	base_dir = os.path.dirname(__file__)
+	local_path = os.path.join(base_dir, filename)
+	if os.path.exists(local_path):
+		return local_path
+
+	return os.path.join(base_dir, "..", "images", filename)
+
+
+def chooseImage():
+	image_options = ["wdg2.bmp", "lena.jpg", "cln1.bmp", "Bikesgray.jpg"]
+
+	print("Escolhe a imagem para testar o Canny detector:")
+	for idx, image_name in enumerate(image_options, start=1):
+		print(f"{idx}. {image_name}")
+
+	while True:
+		choice = input("Opcao (1-4): ").strip()
+		if choice in ("1", "2", "3", "4"):
+			return image_options[int(choice) - 1]
+
+		print("Opcao invalida. Tenta novamente.")
+
+
+selected_image = chooseImage()
+image_path = resolveImagePath(selected_image)
+image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
 if image is None:
 	# Failed Reading
 	print("Image file could not be open!")
 	exit(-1)
 
+print("Imagem selecionada:", selected_image)
 printImageFeatures(image)
 
-# Show original (convert to UMat for type stubs)
-cv2.imshow('Orginal', cv2.UMat(image))
+cv2.imshow("Orginal", image)
 
-# Sobel Operator 3 x 3
-# compute on UMat to satisfy type hints and use keyword for ksize
-src_umat = cv2.UMat(image)
-imageSobel3x3_X = cv2.Sobel(src_umat, cv2.CV_64F, 1, 0, ksize=3)
+# Canny edge detector
+edges = cv2.Canny(image, 100, 150)
+cv2.namedWindow("Canny", cv2.WINDOW_AUTOSIZE)
+cv2.imshow("Canny", edges)
 
-cv2.namedWindow("Sobel 3 x 3 - X", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Sobel 3 x 3 - X", imageSobel3x3_X)
-
-# Convert result back to numpy for absolute and 8-bit conversion
-sobel_np = imageSobel3x3_X.get()
-image8bits = np.uint8(np.absolute(sobel_np))
-cv2.imshow("8 bits - Sobel 3 x 3 - X", cv2.UMat(image8bits))
-
+print("Pressiona qualquer tecla para fechar.")
 cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
