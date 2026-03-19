@@ -51,7 +51,6 @@ image_path = resolveImagePath(selected_image)
 image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
 if image is None:
-	# Failed Reading
 	print("Image file could not be open!")
 	exit(-1)
 
@@ -67,6 +66,5 @@ cv2.imshow("Canny", edges)
 
 print("Pressiona qualquer tecla para fechar.")
 cv2.waitKey(0)
-cv2.destroyAllWindows()
 
 
