@@ -25,6 +25,14 @@ rot_trans_M_3 = trans_M_3 @ rot_M_3
 rot_trans_M = rot_trans_M_3[0:2, :].astype(np.float32)
 rot_trans_dst = cv2.warpAffine(rot_trans, rot_trans_M, (cols, rows))
 
+output_path = './lena_tf.jpg'
+saved_ok = cv2.imwrite(output_path, rot_trans_dst)
+
+if saved_ok:
+    print(f"Imagem transformada salva em: {output_path}")
+else:
+    print("Falha ao salvar a imagem transformada")
+
 cv2.imshow("Original", image)
 cv2.imshow("Rotation", rot_dst)
 cv2.imshow("Translation", trans_dst)
