@@ -1,6 +1,11 @@
-import sys
-import numpy as np
+# Aula_04_ex_05.py
+#
+# Canny edge detector with a simple CLI image menu
+#
+
+import os
 import cv2
+
 
 def printImageFeatures(image):
 	# Image characteristics
@@ -17,85 +22,49 @@ def printImageFeatures(image):
 	print("Number of elements : %d" % image.size)
 
 
-image = cv2.imread("../images/Bikesgray.jpg", cv2.IMREAD_GRAYSCALE)
+def resolveImagePath(filename):
+	base_dir = os.path.dirname(__file__)
+	local_path = os.path.join(base_dir, filename)
+	if os.path.exists(local_path):
+		return local_path
+
+	return os.path.join(base_dir, "..", "images", filename)
+
+
+def chooseImage():
+	image_options = ["wdg2.bmp", "lena.jpg", "cln1.bmp", "Bikesgray.jpg"]
+
+	print("Escolhe a imagem para testar o Canny detector:")
+	for idx, image_name in enumerate(image_options, start=1):
+		print(f"{idx}. {image_name}")
+
+	while True:
+		choice = input("Opcao (1-4): ").strip()
+		if choice in ("1", "2", "3", "4"):
+			return image_options[int(choice) - 1]
+
+		print("Opcao invalida. Tenta novamente.")
+
+
+selected_image = chooseImage()
+image_path = resolveImagePath(selected_image)
+image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
 if image is None:
 	print("Image file could not be open!")
 	exit(-1)
 
+print("Imagem selecionada:", selected_image)
 printImageFeatures(image)
 
-# Show original
-cv2.imshow('Orginal', image)
+cv2.imshow("Orginal", image)
 
-# Sobel Operator 3 x 3
-'''
-imageSobel3x3_X = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=3)
-imageSobel3x3_Y = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=3)
+# Canny edge detector
+edges = cv2.Canny(image, 100, 150)
+cv2.namedWindow("Canny", cv2.WINDOW_AUTOSIZE)
+cv2.imshow("Canny", edges)
 
-cv2.namedWindow("Sobel 3 x 3 - X", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Sobel 3 x 3 - X", imageSobel3x3_X)
-cv2.namedWindow("Sobel 3 x 3 - Y", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Sobel 3 x 3 - Y", imageSobel3x3_Y)
-
-# Convert result back to numpy for absolute and 8-bit conversion
-image8bits = cv2.convertScaleAbs(imageSobel3x3_X)
-image8bitsY = cv2.convertScaleAbs(imageSobel3x3_Y)
-cv2.imshow("8 bits - Sobel 3 x 3 - X", image8bits)
-cv2.imshow("8 bits - Sobel 3 x 3 - Y", image8bitsY)
-'''
-
-# canny
-
-edges1 = cv2.Canny(image, 1, 255, apertureSize=3, L2gradient=False)
-edges2 = cv2.Canny(image, 220, 225, apertureSize=3, L2gradient=False)
-edges3 = cv2.Canny(image, 1, 128, apertureSize=3, L2gradient=False)
-
-
-cv2.namedWindow("Canny 1-255", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Canny 1-255", edges1)
-
-cv2.namedWindow("Canny 220-225", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Canny 220-225", edges2)
-
-cv2.namedWindow("Canny 1-128", cv2.WINDOW_AUTOSIZE)
-cv2.imshow("Canny 1-128", edges3)
-
-# camera
-'''
-capture = cv2.VideoCapture(0)
-
-if not capture.isOpened():
-	print("Could not open camera.")
-	exit(-1)
-
-threshold1 = 1
-threshold2 = 255
-
-while True:
-	ret, frame = capture.read()
-	if not ret:
-		print("Failed to read frame from camera.")
-		break
-
-	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	sobel_x = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
-	sobel_y = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
-
-	sobel_x_video = cv2.convertScaleAbs(sobel_x)
-	sobel_y_video = cv2.convertScaleAbs(sobel_y)
-	
-	canny = cv2.Canny(gray, threshold1, threshold2, apertureSize=3, L2gradient=False)
-
-	cv2.imshow("video", frame)
-	cv2.imshow("video - sobel x", sobel_x_video)
-	cv2.imshow("video - sobel y", sobel_y_video)
-	cv2.imshow("video - canny", canny)
-	if cv2.waitKey(1) & 0xFF == ord("q"):
-		break
-
-capture.release()
-'''
-
+print("Pressiona qualquer tecla para fechar.")
 cv2.waitKey(0)
-cv2.destroyAllWindows()
+
+
