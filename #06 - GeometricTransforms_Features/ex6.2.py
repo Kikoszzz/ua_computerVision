@@ -7,12 +7,8 @@ print('1 - default (current images)')
 print('2 - alternative (gui.JPG)')
 choice = input('Option [1/2]: ').strip()
 
-if choice == '2':
-    src_path = '../images/gui.JPG'
-    dst_path = '../images/gui_tf.jpg'
-else:
-    src_path = '../images/lena.jpg'
-    dst_path = '../images/lena_tf.jpg'
+src_path = '../images/gui.JPG' if choice == '2' else '../images/lena.jpg'
+dst_path = '../images/gui_tf.jpg' if choice == '2' else '../images/lena_tf.jpg'
 
 src = cv2.imread(src_path, cv2.IMREAD_GRAYSCALE)
 dst = cv2.imread(dst_path, cv2.IMREAD_GRAYSCALE)
@@ -20,6 +16,11 @@ dst = cv2.imread(dst_path, cv2.IMREAD_GRAYSCALE)
 if src is None or dst is None:
     print(f"Image not found. Run ex6.1.py first to create {dst_path}")
     exit(-1)
+
+if choice == '2' and src is not None:
+    f = 600 / src.shape[1]
+    src = cv2.resize(src, None, fx=f, fy=f)
+    dst = cv2.resize(dst, None, fx=f, fy=f)
 
 if src.shape != dst.shape:
     dst = cv2.resize(dst, (src.shape[1], src.shape[0]))

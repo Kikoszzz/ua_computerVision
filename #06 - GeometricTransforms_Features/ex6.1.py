@@ -6,22 +6,24 @@ print('1 - default (current images)')
 print('2 - alternative (gui.JPG)')
 choice = input('Option [1/2]: ').strip()
 
-if choice == '2':
-    src_path = '../images/gui.JPG'
-    out_path = '../images/gui_tf.jpg'
-else:
-    src_path = '../images/lena.jpg'
-    out_path = '../images/lena_tf.jpg'
+src_path = '../images/gui.JPG' if choice == '2' else '../images/lena.jpg'
+dst_path = '../images/gui_tf.jpg' if choice == '2' else '../images/lena_tf.jpg'
 
-image = cv2.imread(src_path, cv2.IMREAD_GRAYSCALE)
+src = cv2.imread(src_path, cv2.IMREAD_GRAYSCALE)
+dst = cv2.imread(dst_path, cv2.IMREAD_GRAYSCALE)
 
-if image is None:
+if src is None:
     print(f"Erro no caminho da imagem: {src_path}")
     exit(-1)
 
-rows, cols = image.shape
+if choice == '2' and src is not None:
+    f = 600 / src.shape[1]
+    src = cv2.resize(src, None, fx=f, fy=f)
+    if dst is not None:
+        dst = cv2.resize(dst, None, fx=f, fy=f)
 
-# Base matrix suggested in README (rotation + translation)
+rows, cols = src.shape
+
 M = cv2.getRotationMatrix2D((0, 0), 25, 1)
 print("Rotation matrix:")
 print(M)
@@ -30,16 +32,16 @@ M[1][2] = 100
 print("\nRotation + translation matrix:")
 print(M)
 
-tf = cv2.warpAffine(image, M, (cols, rows))
+tf = cv2.warpAffine(src, M, (cols, rows))
 
-ok = cv2.imwrite(out_path, tf)
+ok = cv2.imwrite(dst_path, tf)
 
 if ok:
-    print(f"\nSaved transformed image to: {out_path}")
+    print(f"\nSaved transformed image to: {dst_path}")
 else:
-    print(f"\nFailed to save transformed image to: {out_path}")
+    print(f"\nFailed to save transformed image to: {dst_path}")
 
-cv2.imshow("Original", image)
+cv2.imshow("Original", src)
 cv2.imshow("Transformed", tf)
 
 cv2.waitKey(0)
