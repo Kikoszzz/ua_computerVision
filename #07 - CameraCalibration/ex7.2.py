@@ -28,13 +28,21 @@ objp = np.zeros((board_w * board_h, 3), np.float32)
 objp[:, :2] = np.mgrid[0:board_w, 0:board_h].T.reshape(-1, 2) * square_size
 
 # Carregar intrínsecos e distortion gerados pelo script de calibração
-if not os.path.exists('camera.npz'):
-    print('Arquivo camera.npz não encontrado. Rode chessboard.py primeiro para gerar intrinsics e distortion.')
+# Procurar primeiro por camera_7.3.npz (gerado por ex7.3), depois por camera.npz
+npz_candidates = ['camera_7.3.npz', 'camera.npz']
+found_npz = None
+for p in npz_candidates:
+    if os.path.exists(p):
+        found_npz = p
+        break
+if found_npz is None:
+    print('Arquivo camera_7.3.npz ou camera.npz não encontrado. Rode ex7.3.py ou chessboard.py primeiro para gerar intrinsics e distortion.')
     exit()
 
-data = np.load('camera.npz')
+data = np.load(found_npz)
 mtx = data['intrinsics']
 dist = data['distortion']
+print(f'Usando parâmetros de calibração de: {found_npz}')
 
 # Escolher primeira imagem de calibração para projeção
 images = sorted(glob.glob('../images/left*.jpg'))
