@@ -1,53 +1,73 @@
- # Aula_01_ex_01.py
- #
- # Cheesboard Calibration
- #
- # Paulo Dias
-
 import numpy as np
 import cv2
 import glob
 
-# Board Size
+# Board Size (número de cantos internos)
 board_h = 9
 board_w = 6
 
-# Arrays to store object points and image points from all the images.
-objpoints = [] # 3d point in real world space
-imgpoints = [] # 2d points in image plane.
+# Critério para melhorar precisão dos cantos (sub-pixel)
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
+# Preparar pontos 3D do mundo real (z = 0)
+objp = np.zeros((board_w * board_h, 3), np.float32)
+objp[:, :2] = np.mgrid[0:board_w, 0:board_h].T.reshape(-1, 2)
 
-def  FindAndDisplayChessboard(img):
-    # Find the chess board corners
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+# Arrays para armazenar pontos
+objpoints = []  # 3D
+imgpoints = []  # 2D
 
-    ret, corners = cv2.findChessboardCorners(gray, (board_w,board_h),None)
+# Ler imagens
+images = sorted(glob.glob('../images/left*.jpg'))
 
-    # If found, display image with corners
-    if ret == True:
-        img = cv2.drawChessboardCorners(img, (board_w, board_h), corners, ret)
-        cv2.imshow('img',img)
-        cv2.waitKey(500)
-
-    return ret, corners
-
-# prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-objp = np.zeros((board_w*board_h,3), np.float32)
-objp[:,:2] = np.mgrid[0:board_w,0:board_h].T.reshape(-1,2)
-
-# Arrays to store object points and image points from all the images.
-objpoints = [] # 3d point in real world space
-imgpoints = [] # 2d points in image plane.
-
-# Read images
-images = sorted(glob.glob('..//images//left*.jpg'))
+img_size = None
 
 for fname in images:
     img = cv2.imread(fname)
-    ret, corners = FindAndDisplayChessboard(img)
-    if ret == True:
-        objpoints.append(objp)
-        imgpoints.append(corners)
+    
+    if img is None:
+        continue
 
-cv2.waitKey(-1)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Encontrar cantos
+    ret, corners = cv2.findChessboardCorners(gray, (board_w, board_h), None)
+
+    if ret:
+        # Refinar cantos (mais precisão)
+        corners2 = cv2.cornerSubPix(
+            gray, corners, (11, 11), (-1, -1), criteria
+        )
+
+        objpoints.append(objp)
+        imgpoints.append(corners2)
+
+        # Guardar tamanho da imagem (uma vez basta)
+        if img_size is None:
+            img_size = gray.shape[::-1]
+
+        # Mostrar resultado
+        cv2.drawChessboardCorners(img, (board_w, board_h), corners2, ret)
+        cv2.imshow('img', img)
+        cv2.waitKey(500)
+
+# Verificação de segurança
+if img_size is None or len(objpoints) == 0:
+    print("Erro: nenhum tabuleiro detectado nas imagens.")
+    exit()
+
+# Calibração
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
+    objpoints,
+    imgpoints,
+    img_size,
+    None,
+    None
+)
+
+# Resultados
+print("\nErro de reprojeção:", ret)
+print("\nMatriz da câmara:\n", mtx)
+print("\nCoeficientes de distorção:\n", dist)
+
 cv2.destroyAllWindows()
