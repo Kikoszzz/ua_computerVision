@@ -42,7 +42,6 @@ for fname in images:
         objpoints.append(objp)
         imgpoints.append(corners2)
 
-        # Guardar tamanho da imagem (uma vez basta)
         if img_size is None:
             img_size = gray.shape[::-1]
 
@@ -57,7 +56,7 @@ if img_size is None or len(objpoints) == 0:
     exit()
 
 # Calibração
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
+_, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
     objpoints,
     imgpoints,
     img_size,
@@ -65,9 +64,18 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(
     None
 )
 
-# Resultados
-print("\nErro de reprojeção:", ret)
-print("\nMatriz da câmara:\n", mtx)
-print("\nCoeficientes de distorção:\n", dist)
+print("Intrinsics: ")
+print(mtx)
+print("Distortion : ")
+print(dist)
+for i in range(len(tvecs)):
+    print ("Translations(%d) : " % i )
+    print(tvecs[i])
+    print ("Rotation(%d) : " % i )
+    print(rvecs[i])
+
+# Salvar intrinsics e distortion em arquivo .npz
+np.savez('camera.npz', intrinsics=mtx, distortion=dist )
+print('\nSaved camera.npz')
 
 cv2.destroyAllWindows()
