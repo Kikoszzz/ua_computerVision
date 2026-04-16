@@ -13,7 +13,7 @@
 
 Compile and test the file `chessboard.py` (similar to the one used in the last lecture). This code detects corners in a chessboard pattern using openCV functions and shows the results of the detection for a series of images.
 
-Rename the file (`stereo_exe_1.py` for example) and modify the code to allow for detection of corners in a series of stereo pair images (use the provided right images with name `rightxx.jpg`). 
+Rename the file (`stereo_exe_1.py` for example) and modify the code to alwlow for detection of corners in a series of stereo pair images (use the provided right images with name `rightxx.jpg`). 
 Fill the necessary matrices with the correct value to calibrate the stereo pair. The objective is to define 3 matrices: `left_corners`, `right_cornes` and `objPoints` with, respectively, 2D pixel coordinates of the corners in the left and right image (2 coordinates per row), 3D point coordinates of the chessboard corner (3 coordinates per row).
 
 ## 8.2 - Stereo Calibration
