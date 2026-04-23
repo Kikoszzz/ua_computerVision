@@ -57,7 +57,7 @@ def draw_epiline(img, line, color):
 	else:
 		return
 
-	cv2.line(img, pt1, pt2, color, 1, cv2.LINE_AA)
+	cv2.line(img, pt1, pt2, color, 3, cv2.LINE_AA)
 
 
 def mouse_handler(event, x, y, flags, params):
