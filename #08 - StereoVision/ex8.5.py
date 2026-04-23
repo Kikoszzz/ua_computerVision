@@ -67,7 +67,8 @@ def main():
 	ap.add_argument('--left', help='Explicit left image path (overrides pattern)')
 	ap.add_argument('--right', help='Explicit right image path')
 	ap.add_argument('--step', type=int, default=25, help='Row spacing for horizontal guide lines')
-	ap.add_argument('--interactive', action='store_true', help='Enable click interaction to show corresponding row')
+	ap.add_argument('--no-interactive', dest='interactive', action='store_false', help='Disable click interaction')
+	ap.set_defaults(interactive=True)
 	args = ap.parse_args()
 
 	if not os.path.exists('stereoParams.npz'):
@@ -170,12 +171,14 @@ def main():
 
 	if args.interactive:
 		print('Interactive mode: click a point to show corresponding row in the other image.')
+		baseL = rectL_grid.copy()
+		baseR = rectR_grid.copy()
 		params_left = {
 			'name': 'Left',
 			'self_img': rectL_grid,
 			'other_img': rectR_grid,
-			'self_clean': rectL.copy(),
-			'other_clean': rectR.copy(),
+			'self_clean': baseL,
+			'other_clean': baseR,
 			'self_window': winL,
 			'other_window': winR,
 		}
@@ -183,8 +186,8 @@ def main():
 			'name': 'Right',
 			'self_img': rectR_grid,
 			'other_img': rectL_grid,
-			'self_clean': rectR.copy(),
-			'other_clean': rectL.copy(),
+			'self_clean': baseR,
+			'other_clean': baseL,
 			'self_window': winR,
 			'other_window': winL,
 		}
