@@ -17,6 +17,3 @@ Axes = o3d.geometry.TriangleMesh.create_coordinate_frame(1)
 
 # shome meshes in view
 o3d.visualization.draw_geometries([pcl , Axes])
-
-
-
